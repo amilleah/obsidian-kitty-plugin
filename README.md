@@ -9,7 +9,7 @@ A lightweight, non-intrusive desktop pet for Obsidian. Kitty brings a small, ani
 
 ### What can Kitty do?
 - **Follows your focus**: Drag your pet anywhere in your workspace. It settles at the bottom of whatever note you're currently working on.
-- *Ready to go*: Includes **Kitty** (artwork by [Elthen](https://elthen.itch.io/2d-pixel-art-cat-sprites)) and a lucky **Maneki Neko** (artwork by me!) with no extra setup required.
+- **Ready to go**: Includes **Kitty** (artwork by [Elthen](https://elthen.itch.io/2d-pixel-art-cat-sprites)) and a lucky **Maneki Neko** (artwork by me!) with no extra setup required.
 - **A life of its own**: Your pet will explore, sit, or nap inside your notes. It can even walk back and forth within view.
 - **Always there**: Your pet remembers its home. If you restart Obsidian, it will be waiting for you exactly where you left it.
 - **Make it yours**: Upload your own pixel art to grow your library of custom desktop companions.
