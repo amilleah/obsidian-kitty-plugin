@@ -5,7 +5,7 @@
 
 A lightweight, non-intrusive desktop pet for Obsidian. Kitty brings a small, animated friend to your workspace that roams around your notes while you work.
 
-<video src=".github/demo/kitty-demo.mov" width="100%" controls autoplay muted loop></video>
+![https://github.com/amilleah/obsidian-kitty-plugin/blob/385abb661084c3045af872c55c1a27c89a8ac148/.github/demo/kitty-demo.mov](https://github.com/amilleah/obsidian-kitty-plugin/blob/385abb661084c3045af872c55c1a27c89a8ac148/.github/demo/kitty-demo.mov)
 
 ### What can Kitty do?
 - **Follows your focus**: Drag your pet anywhere in your workspace. It settles at the bottom of whatever note you're currently working on.
