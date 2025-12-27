@@ -1,90 +1,51 @@
-# Obsidian Sample Plugin
+# Kitty Plugin
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/amilleah/obsidian-kitty-plugin)
+![GitHub](https://img.shields.io/github/license/amilleah/obsidian-kitty-plugin)
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+A lightweight, non-intrusive desktop pet for Obsidian. Kitty brings a small, animated friend to your workspace that roams around your notes while you work.
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open modal (simple)" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+<video src=".github/demo/kitty-demo.mov" width="100%" controls autoplay muted loop></video>
 
-## First time developing plugins?
+### What can Kitty do?
+- **Follows your focus**: Drag your pet anywhere in your workspace. It settles at the bottom of whatever note you're currently working on.
+- *Ready to go*: Includes **Kitty** (artwork by [Elthen](https://elthen.itch.io/2d-pixel-art-cat-sprites)) and a lucky **Maneki Neko** (artwork by me!) with no extra setup required.
+- **A life of its own**: Your pet will explore, sit, or nap inside your notes. It can even walk back and forth within view.
+- **Always there**: Your pet remembers its home. If you restart Obsidian, it will be waiting for you exactly where you left it.
+- **Make it yours**: Upload your own pixel art to grow your library of custom desktop companions.
 
-Quick starting guide for new plugin devs:
+## Settings
+- **Persist on relaunch**: Keeps the pet active and on the same leaf across Obsidian sessions.
+- **Allow movement**: Enable or disable horizontal roaming.
+- **Sprite selection**: Choose between different pets saved in your library.
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+### Sprite editor
+- **Frame dimensions**: Configure a spritesheet by frame slice (e.g., `32, 32`).
+- **Frame scale**: Pixel-perfect scaling for crisp pixel art.
+- **Frames per second**: Control the speed of the animation cycle.
 
-## Releasing new releases
+## Installation
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+### Community Plugins (Pending)
+1. Open **Settings** > **Community Plugins**.
+2. Select **Browse** and search for "Kitty".
+3. Click **Install**, then **Enable**.
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+### Manual Installation
+1. Download the latest release (`main.js`, `manifest.json`, `styles.css`).
+2. Create a folder named `obsidian-kitty-plugin` in your vault's `.obsidian/plugins/` directory.
+3. Move the downloaded files into that folder and enable the plugin.
 
-## Adding your plugin to the community plugin list
+> **To start:** Open the Command Palette (`Cmd/Ctrl + P`) and run `Kitty: Toggle sprite`.
 
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+---
 
-## How to use
+## Custom Sprites
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+You can find many free spritesheets online. I recommend [Aseprite](https://github.com/aseprite/aseprite) for creating your own.
 
-## Manually installing the plugin
+1. **Prepare your image**: Use a transparent `.png` where the animations are laid out in a grid.
+2. **Import**: Use the **Choose file** button in the settings to add it to your library.
+3. **Save**: Give it a name and hit **Save to library**.
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
-
-## Improve code quality with eslint
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- This project already has eslint preconfigured, you can invoke a check by running`npm run lint`
-- Together with a custom eslint [plugin](https://github.com/eslint-plugin) for Obsidan specific code guidelines.
-- A GitHub action is preconfigured to automatically lint every commit on all branches.
-
-## Funding URL
-
-You can include funding URLs where people who use your plugin can financially support it.
-
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
-
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
-```
-
-If you have multiple URLs, you can also do:
-
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
-```
-
-## API Documentation
-
-See https://docs.obsidian.md
+> **NOTE:** If your sprite is facing the wrong way, you'll need to horizontally reflect the image file! The plugin handles horizontal flipping based on movement direction!

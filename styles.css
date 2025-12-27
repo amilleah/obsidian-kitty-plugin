@@ -1,8 +1,22 @@
-/*
+.kitty-host {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    z-index: 1;
+    pointer-events: none; 
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+.kitty-canvas {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    pointer-events: auto;
+    cursor: grab;
+}
 
-If your plugin does not need CSS, delete this file.
+.kitty-leaf-host {
+    position: relative !important;
+}
 
-*/
+.kitty-host.is-dragging .kitty-canvas {
+    cursor: grabbing;
+}

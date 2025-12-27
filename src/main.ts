@@ -1,99 +1,103 @@
-import {App, Editor, MarkdownView, Modal, Notice, Plugin} from 'obsidian';
-import {DEFAULT_SETTINGS, MyPluginSettings, SampleSettingTab} from "./settings";
+import { Plugin, Notice, View, WorkspaceLeaf } from "obsidian";
+import { KittySettings, DEFAULT_SETTINGS } from "./types";
+import { KittySettingTab } from "./settings";
+import { KittyController } from "./controller";
 
-// Remember to rename these classes and interfaces!
+export default class Kitty extends Plugin {
+    settings: KittySettings;
+    controller: KittyController;
 
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+    async onload() {
+        await this.loadSettings();
 
-	async onload() {
-		await this.loadSettings();
+        if (!this.settings.persistOnRelaunch) {
+            this.settings.isEnabled = false;
+            this.settings.activeLeafId = null;
+        }
 
-		// This creates an icon in the left ribbon.
-		this.addRibbonIcon('dice', 'Sample', (evt: MouseEvent) => {
-			// Called when the user clicks the icon.
-			new Notice('This is a notice!');
-		});
+        this.controller = new KittyController(this);
+        this.addChild(this.controller);
+        this.addSettingTab(new KittySettingTab(this.app, this));
 
-		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
-		const statusBarItemEl = this.addStatusBarItem();
-		statusBarItemEl.setText('Status bar text');
+        this.app.workspace.onLayoutReady(() => {
+            this.controller.initializeFromSave();
+        });
 
-		// This adds a simple command that can be triggered anywhere
-		this.addCommand({
-			id: 'open-modal-simple',
-			name: 'Open modal (simple)',
-			callback: () => {
-				new SampleModal(this.app).open();
-			}
-		});
-		// This adds an editor command that can perform some operation on the current editor instance
-		this.addCommand({
-			id: 'replace-selected',
-			name: 'Replace selected content',
-			editorCallback: (editor: Editor, view: MarkdownView) => {
-				editor.replaceSelection('Sample editor command');
-			}
-		});
-		// This adds a complex command that can check whether the current state of the app allows execution of the command
-		this.addCommand({
-			id: 'open-modal-complex',
-			name: 'Open modal (complex)',
-			checkCallback: (checking: boolean) => {
-				// Conditions to check
-				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
-				if (markdownView) {
-					// If checking is true, we're simply "checking" if the command can be run.
-					// If checking is false, then we want to actually perform the operation.
-					if (!checking) {
-						new SampleModal(this.app).open();
-					}
+        this.registerEvent(
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+            (this.app.workspace as any).on('detach', (leaf: WorkspaceLeaf) => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+                const internalLeaf = leaf as any;
+                
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+                const leafId = internalLeaf.id;
 
-					// This command will only show up in Command Palette when the check function returns true
-					return true;
-				}
-				return false;
-			}
-		});
+                if (leafId && leafId === this.settings.activeLeafId) {
+                    this.settings.isEnabled = false;
+                    this.settings.activeLeafId = null;
+                    this.controller.cleanup();
+                    void this.saveSettings();
+                    
+                    const label = this.settings.activeSprite;
+                    new Notice(`${label} disappeared.`);
+                }
+            })
+        );
 
-		// This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new SampleSettingTab(this.app, this));
+        this.registerEvent(
+            this.app.workspace.on('layout-change', () => {
+                if (this.settings.isEnabled && this.settings.activeLeafId) {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+                    const leaf = (this.app.workspace as any).getLeafById(this.settings.activeLeafId);
+                    if (!leaf) {
+                        this.settings.isEnabled = false;
+                        this.settings.activeLeafId = null;
+                        this.controller.cleanup();
+                        void this.saveSettings();
+                        
+                        const label = this.settings.activeSprite;
+                        new Notice(`${label} disappeared.`);
+                    }
+                }
+            })
+        );
+        
+        this.addCommand({
+            id: 'toggle-sprite',
+            name: 'Toggle sprite',
+            callback: async () => {
+                const view = this.app.workspace.getActiveViewOfType(View);
+                const leaf = view?.leaf;
 
-		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
-		// Using this function will automatically remove the event listener when this plugin is disabled.
-		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-			new Notice("Click");
-		});
+                if (!leaf) {
+                    new Notice("Select a pane to toggle.");
+                    return;
+                }
 
-		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
+                this.settings.isEnabled = !this.settings.isEnabled;
 
-	}
+                if (this.settings.isEnabled) {
+                    const leafWithId = leaf as WorkspaceLeaf & { id?: string };
+                    this.settings.activeLeafId = leafWithId.id ?? null;
+                } else {
+                    this.settings.activeLeafId = null;
+                }
 
-	onunload() {
-	}
+                await this.saveSettings();
+                this.controller.refresh(leaf);
 
-	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData() as Partial<MyPluginSettings>);
-	}
+                const label = this.settings.activeSprite;
+                new Notice(this.settings.isEnabled ? `A ${label} appeared.` : `${label} disappeared.`);
+            }
+        });
+    }
 
-	async saveSettings() {
-		await this.saveData(this.settings);
-	}
-}
+    async loadSettings() {
+        const data = (await this.loadData()) as Record<string, unknown>;
+        this.settings = Object.assign({}, DEFAULT_SETTINGS, data);
+    }
 
-class SampleModal extends Modal {
-	constructor(app: App) {
-		super(app);
-	}
-
-	onOpen() {
-		let {contentEl} = this;
-		contentEl.setText('Woah!');
-	}
-
-	onClose() {
-		const {contentEl} = this;
-		contentEl.empty();
-	}
+    async saveSettings() {
+        await this.saveData(this.settings);
+    }
 }
