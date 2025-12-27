@@ -1,5 +1,5 @@
 {
-    "name": "obsidian-kitty-plugin",
+    "name": "kitty",
     "version": "1.0.0",
     "description": "A tiny kitty sprite that roams your panes.",
     "main": "main.js",
