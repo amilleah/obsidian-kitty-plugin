@@ -3,6 +3,14 @@ import { SpriteConfig, FrameDef, KITTY_CONFIG } from "./types";
 import { ASSETS } from "./assets"
 import Kitty from "./main";
 
+interface InternalLeaf extends WorkspaceLeaf {
+    id: string;
+}
+
+interface InternalWorkspace {
+    getLeafById(id: string): WorkspaceLeaf | null;
+}
+
 export class KittyController extends Component {
     plugin: Kitty;
     app: App;
@@ -43,14 +51,13 @@ export class KittyController extends Component {
         if (!this.plugin.settings.isEnabled) return;
         const savedId = this.plugin.settings.activeLeafId;
         
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
-        const workspace = this.app.workspace as any;
         let leaf: WorkspaceLeaf | null = null;
         
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        if (savedId && typeof workspace.getLeafById === 'function') {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-            leaf = workspace.getLeafById(savedId) as WorkspaceLeaf;
+        if (savedId) {
+            const workspace = this.app.workspace as InternalWorkspace;
+            if (typeof workspace.getLeafById === 'function') {
+                leaf = workspace.getLeafById(savedId);
+            }
         }
 
         if (!leaf) {
@@ -208,23 +215,21 @@ export class KittyController extends Component {
         const gridStep = this.config.scale;
         const visualX = Math.round(this.posX / gridStep) * gridStep;
         
-         
-        this.containerEl.style.left = `${visualX}px`;
-         
-        this.containerEl.style.transform = this.movingRight ? 'scaleX(1)' : 'scaleX(-1)';
+        const props: Record<string, string> = {
+            "--kitty-left": `${visualX}px`,
+            "--kitty-transform": this.movingRight ? 'scaleX(1)' : 'scaleX(-1)'
+        };
 
         if (this.posY === null) {
-            // eslint-disable-next-line obsidianmd/no-static-styles-assignment
-            this.containerEl.style.bottom = '0px';
-            // eslint-disable-next-line obsidianmd/no-static-styles-assignment
-            this.containerEl.style.top = 'auto';
+            props["--kitty-bottom"] = '0px';
+            props["--kitty-top"] = 'auto';
         } else {
             const visualY = Math.round(this.posY / gridStep) * gridStep;
-            // eslint-disable-next-line obsidianmd/no-static-styles-assignment
-            this.containerEl.style.bottom = 'auto';
-             
-            this.containerEl.style.top = `${visualY}px`;
+            props["--kitty-bottom"] = 'auto';
+            props["--kitty-top"] = `${visualY}px`;
         }
+
+        this.containerEl.setCssProps(props);
     }
 
     private onPointerDown(evt: PointerEvent) {
@@ -314,7 +319,7 @@ export class KittyController extends Component {
 
     private async persistTargetLeaf() {
         if (!this.targetLeaf) return;
-        const leafWithId = this.targetLeaf as WorkspaceLeaf & { id?: string };
+        const leafWithId = this.targetLeaf as InternalLeaf;
         if (leafWithId.id) {
             this.plugin.settings.activeLeafId = leafWithId.id;
             await this.plugin.saveSettings();

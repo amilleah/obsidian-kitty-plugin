@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting, Notice, normalizePath } from "obsidian";
+import { App, PluginSettingTab, Setting, Modal, Notice, normalizePath } from "obsidian";
 import Kitty from "./main";
 import { SpriteConfig, KITTY_CONFIG, MANEKI_NEKO_CONFIG } from "./types";
 
@@ -131,22 +131,21 @@ export class KittySettingTab extends PluginSettingTab {
                 .setIcon("trash-2")
                 .setWarning()
                 .setTooltip("Delete sprite from library")
-                .onClick(async () => {
+                .onClick(() => {
                     const name = this.editorConfig.name;
-                    // eslint-disable-next-line no-alert
-                    if (confirm(`Are you sure you want to delete "${name}"?`)) {
-                        delete this.plugin.settings.library[name];
-                        
-                        if (this.plugin.settings.activeSprite === name) {
-                            this.plugin.settings.activeSprite = "Kitty";
-                        }
-                        
-                        await this.plugin.saveSettings();
-                        this.resetEditor();
-                        this.display();
-                        this.plugin.controller.refresh();
-                        new Notice(`Deleted ${name}.`);
-                    }
+                    new ConfirmModal(this.app, `Do you want to delete "${name}"?`, () => {
+                        void (async () => {
+                            delete this.plugin.settings.library[name];
+                            if (this.plugin.settings.activeSprite === name) {
+                                this.plugin.settings.activeSprite = "Kitty";
+                            }
+                            await this.plugin.saveSettings();
+                            this.resetEditor();
+                            this.display();
+                            this.plugin.controller.refresh();
+                            new Notice(`Deleted ${name}.`);
+                        })();
+                    }).open();
                 }));
         }
         
@@ -169,10 +168,8 @@ export class KittySettingTab extends PluginSettingTab {
                 }
 
                 await this.plugin.saveSettings();
-                
                 this.resetEditor(); 
                 this.display();
-
                 this.plugin.controller.refresh();
             }));
 
@@ -188,5 +185,30 @@ export class KittySettingTab extends PluginSettingTab {
                 new Notice(`Saved ${name}.`);
                 this.display();
             }));
+    }
+}
+
+export class ConfirmModal extends Modal {
+    onConfirm: () => void;
+
+    constructor(app: App, message: string, onConfirm: () => void) {
+        super(app);
+        this.onConfirm = onConfirm;
+        this.setTitle("Are you sure?");
+        this.contentEl.createEl("p", { text: message });
+    }
+
+    onOpen() {
+        new Setting(this.contentEl)
+            .addButton(btn => btn
+                .setButtonText("Confirm")
+                .setWarning()
+                .onClick(() => {
+                    this.onConfirm();
+                    this.close();
+                }))
+            .addButton(btn => btn
+                .setButtonText("Cancel")
+                .onClick(() => this.close()));
     }
 }
