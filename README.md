@@ -3,14 +3,14 @@
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/amilleah/obsidian-kitty-plugin)
 ![GitHub](https://img.shields.io/github/license/amilleah/obsidian-kitty-plugin)
 
-A lightweight, non-intrusive desktop pet for Obsidian. Kitty brings a small, animated friend to your workspace that roams around your notes while you work.
+A lightweight desktop pet for Obsidian. Kitty brings a small, animated friend to your workspace that roams around your notes.
 
 ![https://github.com/amilleah/obsidian-kitty-plugin/blob/385abb661084c3045af872c55c1a27c89a8ac148/.github/demo/kitty-demo.mov](https://github.com/amilleah/obsidian-kitty-plugin/blob/385abb661084c3045af872c55c1a27c89a8ac148/.github/demo/kitty-demo.mov)
 
 ### What can Kitty do?
-- **Follows your focus**: Drag your pet anywhere in your workspace. It settles at the bottom of whatever note you're currently working on.
-- **Ready to go**: Includes **Kitty** (artwork by [Elthen](https://elthen.itch.io/2d-pixel-art-cat-sprites)) and a lucky **Maneki Neko** (artwork by me!) with no extra setup required.
-- **A life of its own**: Your pet will explore, sit, or nap inside your notes. It can even walk back and forth within view.
+- **Follows your focus**: Drag your pet anywhere in your workspace. It settles at the bottom of whatever you're currently working on.
+- **Ready to go**: Includes **Kitty** (artwork by [Elthen](https://elthen.itch.io/2d-pixel-art-cat-sprites)) and a lucky **Maneki Neko** (artwork by me!).
+- **A life of its own**: Your pet will explore, sit, or nap inside your notes.
 - **Always there**: Your pet remembers its home. If you restart Obsidian, it will be waiting for you exactly where you left it.
 - **Make it yours**: Upload your own pixel art to grow your library of custom desktop companions.
 
@@ -33,7 +33,7 @@ A lightweight, non-intrusive desktop pet for Obsidian. Kitty brings a small, ani
 
 ### Manual Installation
 1. Download the latest release (`main.js`, `manifest.json`, `styles.css`).
-2. Create a folder named `obsidian-kitty-plugin` in your vault's `.obsidian/plugins/` directory.
+2. Create a folder named `kitty` in your vault's `.obsidian/plugins/` directory.
 3. Move the downloaded files into that folder and enable the plugin.
 
 > **To start:** Open the Command Palette (`Cmd/Ctrl + P`) and run `Kitty: Toggle sprite`.
@@ -45,7 +45,7 @@ A lightweight, non-intrusive desktop pet for Obsidian. Kitty brings a small, ani
 You can find many free spritesheets online. I recommend [Aseprite](https://github.com/aseprite/aseprite) for creating your own.
 
 1. **Prepare your image**: Use a transparent `.png` where the animations are laid out in a grid.
-2. **Import**: Use the **Choose file** button in the settings to add it to your library.
+2. **Import**: Use the **Choose file** button in the settings to copy it to your library.
 3. **Save**: Give it a name and hit **Save to library**.
 
 > **NOTE:** If your sprite is facing the wrong way, you'll need to horizontally reflect the image file! The plugin handles horizontal flipping based on movement direction!
