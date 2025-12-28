@@ -5,43 +5,7 @@
 
 A lightweight desktop pet for Obsidian. Kitty brings a small, animated friend to your workspace that roams around your notes.
 
-<div style="display: flex; flex-direction: row; justify-content: center; align-items: flex-end; width: 100%; margin-top: -50px;">
-
-  <div style="display: flex; flex-direction: column; align-items: center; min-width: 150px;">
-    <div style="width: 128px; height: 128px; overflow: hidden; background: transparent;">
-      <div style="
-          width: 1280px; 
-          height: 1280px; 
-          background: url('.github/img/kitty.png') no-repeat;
-          background-size: 1024px 1280px;
-          image-rendering: pixelated;
-          image-rendering: crisp-edges;
-          background-position: 0px -512px; 
-          animation: kitty-run 0.8s steps(8) infinite;
-      "></div>
-    </div>
-    <span style="white-space: nowrap;">Kitty</span>
-  </div>
-
-  <div style="display: flex; flex-direction: column; align-items: center; min-width: 150px;">
-    <div style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
-      <img src=".github/img/maneki-neko.png" 
-           width="64" 
-           height="64" 
-           style="image-rendering: pixelated; image-rendering: crisp-edges; display: block;" 
-           alt="Maneki Neko">
-    </div>
-    <span style="white-space: nowrap;">Maneki Neko</span>
-  </div>
-
-</div>
-
-<style>
-  @keyframes kitty-run {
-    from { background-position: 0px -512px; }
-    to { background-position: -1024px -512px; }
-  }
-</style>
+![maneki-neko](.github/img/vault-maneki-neko.png)
 
 ### What can Kitty do?
 - Drag your pet anywhere in your workspace. They settle at the bottom of whatever you're working on.
