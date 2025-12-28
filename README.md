@@ -5,14 +5,50 @@
 
 A lightweight desktop pet for Obsidian. Kitty brings a small, animated friend to your workspace that roams around your notes.
 
-![https://github.com/amilleah/obsidian-kitty-plugin/blob/385abb661084c3045af872c55c1a27c89a8ac148/.github/demo/kitty-demo.mov](https://github.com/amilleah/obsidian-kitty-plugin/blob/385abb661084c3045af872c55c1a27c89a8ac148/.github/demo/kitty-demo.mov)
+<div style="display: flex; flex-direction: row; justify-content: center; align-items: flex-end; width: 100%; margin-top: -50px;">
+
+  <div style="display: flex; flex-direction: column; align-items: center; min-width: 150px;">
+    <div style="width: 128px; height: 128px; overflow: hidden; background: transparent;">
+      <div style="
+          width: 1280px; 
+          height: 1280px; 
+          background: url('.github/img/kitty.png') no-repeat;
+          background-size: 1024px 1280px;
+          image-rendering: pixelated;
+          image-rendering: crisp-edges;
+          background-position: 0px -512px; 
+          animation: kitty-run 0.8s steps(8) infinite;
+      "></div>
+    </div>
+    <span style="white-space: nowrap;">Kitty</span>
+  </div>
+
+  <div style="display: flex; flex-direction: column; align-items: center; min-width: 150px;">
+    <div style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
+      <img src=".github/img/maneki-neko.png" 
+           width="64" 
+           height="64" 
+           style="image-rendering: pixelated; image-rendering: crisp-edges; display: block;" 
+           alt="Maneki Neko">
+    </div>
+    <span style="white-space: nowrap;">Maneki Neko</span>
+  </div>
+
+</div>
+
+<style>
+  @keyframes kitty-run {
+    from { background-position: 0px -512px; }
+    to { background-position: -1024px -512px; }
+  }
+</style>
 
 ### What can Kitty do?
-- **Follows your focus**: Drag your pet anywhere in your workspace. It settles at the bottom of whatever you're currently working on.
-- **Ready to go**: Includes **Kitty** (artwork by [Elthen](https://elthen.itch.io/2d-pixel-art-cat-sprites)) and a lucky **Maneki Neko** (artwork by me!).
-- **A life of its own**: Your pet will explore, sit, or nap inside your notes.
-- **Always there**: Your pet remembers its home. If you restart Obsidian, it will be waiting for you exactly where you left it.
-- **Make it yours**: Upload your own pixel art to grow your library of custom desktop companions.
+- Drag your pet anywhere in your workspace. They settle at the bottom of whatever you're working on.
+- Includes **Kitty** (artwork by [Elthen](https://elthen.itch.io/2d-pixel-art-cat-sprites)) and a lucky **Maneki Neko** (artwork by me!).
+- Your pet will explore, sit, or nap inside your notes.
+- If you restart Obsidian, they can wait for you exactly where you left them.
+- Upload your own pixel art to grow your library of custom desktop companions.
 
 ## Settings
 - **Persist on relaunch**: Keeps the pet active and on the same leaf across Obsidian sessions.
