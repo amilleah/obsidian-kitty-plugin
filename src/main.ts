@@ -1,7 +1,22 @@
-import { Plugin, Notice, View, WorkspaceLeaf } from "obsidian";
+import { Plugin, Notice, View, WorkspaceLeaf, Workspace, EventRef } from "obsidian";
 import { KittySettings, DEFAULT_SETTINGS } from "./types";
 import { KittySettingTab } from "./settings";
 import { KittyController } from "./controller";
+
+interface ExtendedLeaf extends WorkspaceLeaf {
+    id: string;
+}
+
+interface ExtendedWorkspace extends Workspace {
+    getLeafById(id: string): WorkspaceLeaf | null;
+}
+
+declare module "obsidian" {
+    interface Workspace {
+        on(name: 'detach', callback: (leaf: WorkspaceLeaf) => void, ctx?: unknown): EventRef;
+        getLeafById(id: string): WorkspaceLeaf | null;
+    }
+}
 
 export default class Kitty extends Plugin {
     settings: KittySettings;
@@ -24,12 +39,8 @@ export default class Kitty extends Plugin {
         });
 
         this.registerEvent(
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-            (this.app.workspace as any).on('detach', (leaf: WorkspaceLeaf) => {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
-                const internalLeaf = leaf as any;
-                
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+            this.app.workspace.on('detach', (leaf: WorkspaceLeaf) => {
+                const internalLeaf = leaf as ExtendedLeaf;
                 const leafId = internalLeaf.id;
 
                 if (leafId && leafId === this.settings.activeLeafId) {
@@ -47,8 +58,9 @@ export default class Kitty extends Plugin {
         this.registerEvent(
             this.app.workspace.on('layout-change', () => {
                 if (this.settings.isEnabled && this.settings.activeLeafId) {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-                    const leaf = (this.app.workspace as any).getLeafById(this.settings.activeLeafId);
+                    const workspace = this.app.workspace as ExtendedWorkspace;
+                    const leaf = workspace.getLeafById(this.settings.activeLeafId);
+                    
                     if (!leaf) {
                         this.settings.isEnabled = false;
                         this.settings.activeLeafId = null;
@@ -77,7 +89,7 @@ export default class Kitty extends Plugin {
                 this.settings.isEnabled = !this.settings.isEnabled;
 
                 if (this.settings.isEnabled) {
-                    const leafWithId = leaf as WorkspaceLeaf & { id?: string };
+                    const leafWithId = leaf as ExtendedLeaf;
                     this.settings.activeLeafId = leafWithId.id ?? null;
                 } else {
                     this.settings.activeLeafId = null;
@@ -87,7 +99,7 @@ export default class Kitty extends Plugin {
                 this.controller.refresh(leaf);
 
                 const label = this.settings.activeSprite;
-                new Notice(this.settings.isEnabled ? `A ${label} appeared.` : `${label} disappeared.`);
+                new Notice(this.settings.isEnabled ? `${label} appeared.` : `${label} disappeared.`);
             }
         });
     }

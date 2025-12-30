@@ -71,7 +71,7 @@ export class KittySettingTab extends PluginSettingTab {
                     input.type = 'file';
                     input.accept = 'image/*';
                     
-                    input.onchange = async (e: Event) => {
+                    input.onchange = (e: Event) => {
                         const file = (e.target as HTMLInputElement).files?.[0];
                         if (!file) return;
 
@@ -79,12 +79,16 @@ export class KittySettingTab extends PluginSettingTab {
                         reader.onload = async (event) => {
                             const content = event.target?.result as ArrayBuffer;
                             const pluginDir = this.plugin.manifest.dir;
+                            if (!pluginDir) return;
+
                             const fileName = file.name;
                             const destinationPath = normalizePath(`${pluginDir}/sprites/${fileName}`);
                             
                             const adapter = this.app.vault.adapter;
-                            if (!(await adapter.exists(normalizePath(`${pluginDir}/sprites`)))) {
-                                await adapter.mkdir(normalizePath(`${pluginDir}/sprites`));
+                            const spritesDir = normalizePath(`${pluginDir}/sprites`);
+                            
+                            if (!(await adapter.exists(spritesDir))) {
+                                await adapter.mkdir(spritesDir);
                             }
 
                             await adapter.writeBinary(destinationPath, content);
