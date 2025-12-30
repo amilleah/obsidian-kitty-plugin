@@ -191,19 +191,21 @@ export class KittyController extends Component {
 
     private updateMovement() {
         if (!this.plugin.settings.globalMovement || !this.currentFrameDef?.move) return;
+        
         const spriteWidth = this.sliceW * this.config.scale;
         const parentWidth = this.containerEl?.parentElement?.clientWidth || 0;
+        const buffer = 1;
 
         if (this.movingRight) {
             this.posX += this.velocity;
-            if (this.posX >= (parentWidth - spriteWidth)) {
-                this.posX = parentWidth - spriteWidth;
+            if (this.posX >= (parentWidth - spriteWidth - buffer)) {
+                this.posX = parentWidth - spriteWidth - buffer;
                 this.movingRight = false;
             }
         } else {
             this.posX -= this.velocity;
-            if (this.posX <= 0) {
-                this.posX = 0;
+            if (this.posX <= buffer) {
+                this.posX = buffer;
                 this.movingRight = true;
             }
         }
@@ -236,12 +238,32 @@ export class KittyController extends Component {
         this.isDragging = true;
         this.containerEl?.classList.add("is-dragging");
         
+        const target = evt.target as HTMLElement;
+        target.setPointerCapture(evt.pointerId);
+
+        this.updateDragPosition(evt.clientX, evt.clientY);
+
         this._onMove = (e: PointerEvent) => {
+            if (!this.isDragging) return;
+
             const leaf = this.getLeafFromPoint(e.clientX, e.clientY);
+            
             if (leaf && leaf !== this.targetLeaf) {
+                const oldHostRect = this.containerEl?.parentElement?.getBoundingClientRect();
+                
                 this.targetLeaf = leaf;
                 this.reattach();
+                
+                const newHostRect = this.containerEl?.parentElement?.getBoundingClientRect();
+
+                if (oldHostRect && newHostRect) {
+                    this.posX += (oldHostRect.left - newHostRect.left);
+                    if (this.posY !== null) {
+                        this.posY += (oldHostRect.top - newHostRect.top);
+                    }
+                }
             }
+            
             this.updateDragPosition(e.clientX, e.clientY);
         };
 
@@ -251,8 +273,10 @@ export class KittyController extends Component {
             this.posY = null;
             this.updatePosition();
             void this.persistTargetLeaf();
+
             if (this._onMove) window.removeEventListener("pointermove", this._onMove);
             if (this._onUp) window.removeEventListener("pointerup", this._onUp);
+            
             this._onMove = null;
             this._onUp = null;
         };
@@ -265,12 +289,14 @@ export class KittyController extends Component {
         if (!this.containerEl?.parentElement) return;
         const rect = this.containerEl.parentElement.getBoundingClientRect();
         const spriteWidth = this.sliceW * this.config.scale;
+        const spriteHeight = this.sliceH * this.config.scale;
+        const buffer = 1; 
+
+        const targetX = clientX - rect.left - (spriteWidth / 2);
+        const targetY = clientY - rect.top - (spriteHeight / 2);
         
-        const rawX = clientX - rect.left - (spriteWidth / 2);
-        const rawY = clientY - rect.top - ((this.sliceH * this.config.scale) / 2);
-        
-        this.posX = Math.max(0, Math.min(rawX, rect.width - spriteWidth));
-        this.posY = Math.max(0, Math.min(rawY, rect.height - (this.sliceH * this.config.scale)));
+        this.posX = Math.max(buffer, Math.min(targetX, rect.width - spriteWidth - buffer));
+        this.posY = Math.max(buffer, Math.min(targetY, rect.height - spriteHeight - buffer));
         
         this.updatePosition();
     }
